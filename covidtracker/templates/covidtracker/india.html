@@ -1,0 +1,171 @@
+{% extends 'covidtracker/index.html'%}
+
+
+{%block body%}
+
+<h1 class="text-center text-danger"><u>India'a Details</u></h1>
+<div class="container-fluid">
+    <ul style="display:flex;">
+
+
+      <li>
+        <h6>Country</h6>
+        <p>{{indiadatadict.Country}}</p>
+      </li>
+      <li>
+        <h6>NewConfirmed</h6>
+        <p>{{indiadatadict.NewConfirmed}}</p>
+      </li>
+      <li>
+        <h6>TotalConfirmed</h6>
+        <p>{{indiadatadict.TotalConfirmed}}</p>
+      </li>
+      <li>
+        <h6>NewDeaths</h6>
+        <p>{{indiadatadict.NewDeaths}}</p>
+      </li>
+      <li>
+        <h6>TotalDeaths</h6>
+        <p>{{indiadatadict.TotalDeaths}}</p>
+      </li>
+      <li>
+        <h6>TotalRecovered</h6>
+        <p>{{indiadatadict.TotalRecovered}}</p>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <canvas id="myChart{{forloop.counter}}" width="400" height="100"></canvas>
+        
+        
+    <script>
+    const ctx{{forloop.counter}} = document.getElementById('myChart{{forloop.counter}}').getContext('2d');
+    const myChart{{forloop.counter}} = new Chart(ctx{{forloop.counter}}, {
+        type: 'bar',
+        data: {
+            labels: ['NewConfirmed','TotalConfirmed','NewDeaths','TotalDeaths','TotalRecovered'],
+            datasets: [{
+                label: '{{dst}}',
+                data: [{{indiadatadict.NewConfirmed}},{{indiadatadict.TotalConfirmed}},{{indiadatadict.NewDeaths}},{{indiadatadict.TotalDeaths}},{{indiadatadict.TotalRecovered}}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    </script>
+  </div>
+<div class="container">
+    
+    <div class="row">
+        <div>
+        <form action="" method="POST">
+            {%csrf_token%}
+            <div class="form-group">
+            <label for="state"><b>Select State</b></label>
+            <select class="form-control" name="statename" id="state">
+                {%for state in statelist%}
+                <option value="{{state}}">{{state}}</option>
+                {%endfor%}
+            </select>
+            <input type="submit" class="btn btn-danger my-2 btn-block" value="Search">
+        </div>
+        </form>
+    </div>
+    </div>
+
+    {%if searchstate%}
+
+       
+            
+        <h1 class="text-danger text-center"><u>{{searchstate}} Details</u></h1>
+
+        {% for dst,dstvalue in dst_data.items %}
+        <div class="row border bg-light px-2 py-2 my-2">
+        <div class="col-md-6">
+            <h3 class="text-danger"><u>{{dst}}</u></h3>
+            <table class="table">
+            {%for i,j in dstvalue.items%}
+            <tr>
+                <td>{{i}}</td>
+                <td>{{j}}</td>
+            </tr>
+               
+            {%endfor%}
+        </table>
+    </div>
+    <div class="col-md-6">
+        
+        <canvas id="myChart{{forloop.counter}}" width="400" height="200"></canvas>
+        
+        
+<script>
+const ctx{{forloop.counter}} = document.getElementById('myChart{{forloop.counter}}').getContext('2d');
+const myChart{{forloop.counter}} = new Chart(ctx{{forloop.counter}}, {
+    type: 'bar',
+    data: {
+        labels: [{%for i,j in dstvalue.items%}"{{i}}",{%endfor%}],
+        datasets: [{
+            label: '{{dst}}',
+            data: [{%for i,j in dstvalue.items%}"{{j}}",{%endfor%}],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+        </div>
+
+</div>
+{%endfor%}
+    </div>
+    {%else%}
+    <h1 class="text-center text-danger">Please select City First</h1>
+    {%endif%}
+</div>
+
+
+{%endblock%}
